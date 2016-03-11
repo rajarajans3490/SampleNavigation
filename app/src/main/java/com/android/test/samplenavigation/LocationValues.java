@@ -1,5 +1,10 @@
 package com.android.test.samplenavigation;
 
+/*
+ *This class introduced to set and get the Location values
+ *populated from server.These Coordinate data values will be
+ *used while Navigating to the Location
+ */
 public class LocationValues {
     Double mLatitude;
     Double mLongitude;

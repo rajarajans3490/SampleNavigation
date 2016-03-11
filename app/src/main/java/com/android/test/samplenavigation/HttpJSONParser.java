@@ -1,5 +1,7 @@
 package com.android.test.samplenavigation;
 
+
+import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONException;
 import java.io.BufferedReader;
@@ -15,6 +17,8 @@ public class HttpJSONParser {
     URL url;
     JSONArray mJSONArray = null;
     HttpURLConnection mHttpURLConnection = null;
+    private String TAG = "HttpJSONParser";
+
 
 
     public JSONArray getJSONData(String path) {
@@ -40,7 +44,8 @@ public class HttpJSONParser {
                 response = "";
             }
         } catch (Exception e) {
-            e.printStackTrace();
+             Log.e(TAG,"Exception while getting Data from server :" + e.getMessage());
+             e.printStackTrace();
         }finally {
             mHttpURLConnection.disconnect();
         }
@@ -48,6 +53,7 @@ public class HttpJSONParser {
         try{
             mJSONArray = new JSONArray(response);
         }catch(JSONException ex){
+            Log.e(TAG, "Exception Occured :" + ex.getMessage());
             ex.printStackTrace();
         }
         return mJSONArray;

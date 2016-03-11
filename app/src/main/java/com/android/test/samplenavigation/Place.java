@@ -1,5 +1,9 @@
 package com.android.test.samplenavigation;
-
+/*
+ *This class introduced to set and get the Place values
+ *populated from server.These Place data values will be
+ *used for showing the Mode of transport.
+ */
 public class Place {
     String mCar;
     String mTrain;

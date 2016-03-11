@@ -11,6 +11,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
@@ -22,6 +23,7 @@ import android.widget.Toast;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.util.ArrayList;
 import java.util.Locale;
 
@@ -36,8 +38,8 @@ public class SampleNavigationActivity extends Activity {
     private JSONObject mJSONArrayObject = null;
     private JSONArray mJSONArray = null;
     private String[] name_arr = null;
-    ArrayAdapter<String> adapter = null;
-    Context mContext = null;
+    private ArrayAdapter<String> adapter = null;
+    private Context mContext = null;
     private ArrayList<LocationValues> mlocationarray = null;
     private ArrayList<Place> mplacearray = null;
     private ProgressDialog Dialog = null;
@@ -80,20 +82,21 @@ public class SampleNavigationActivity extends Activity {
                 intent.setClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
                 startActivity(intent);
                 } else {
-                    Toast.makeText(mContext,"Location Coordinates are not Found",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(mContext, R.string.nocoordinates,Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
     }
 
+    // Async Task operation to get the Data from Server
     private class AsyncOperation extends AsyncTask<String, Void, Void> {
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             Dialog = new ProgressDialog(mContext);
-            Dialog.setMessage("Please Wait Fetching Data from Server...");
+            Dialog.setMessage(getResources().getString(R.string.datafetch));
             Dialog.setCancelable(false);
             Dialog.show();
         }
@@ -110,7 +113,7 @@ public class SampleNavigationActivity extends Activity {
             super.onCancelled();
             if (Dialog.isShowing())
                 Dialog.dismiss();
-            Toast.makeText(mContext,"Error while Connecting to the Server",Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, R.string.connecterror, Toast.LENGTH_SHORT).show();
 
         }
 
@@ -121,7 +124,7 @@ public class SampleNavigationActivity extends Activity {
                 showValues();
         }
 
-
+    // Customized OnItemSelectedListener for item selected from  Dropdown.
     public class CustomOnItemSelectedListener implements OnItemSelectedListener {
 
         Context mContext;
@@ -131,18 +134,17 @@ public class SampleNavigationActivity extends Activity {
         }
 
         public void onItemSelected(AdapterView<?> parent, View v, int pos, long row) {
-                String mModecar ="";
-                String mModetrain ="";
+                String mModeCar ="";
+                String mModeTrain ="";
                 mLatitude = null;
                 mLongitude = null;
 
                 if(mplacearray != null && mplacearray.size() > 0) {
-                    mModecar = mplacearray.get(pos).getCarvalue();
-
-                    mTextView2.setText("Car -" + mModecar);
+                    mModeCar = mplacearray.get(pos).getCarvalue();
+                    mTextView2.setText("Car -" + mModeCar);
                     if(mplacearray.get(pos).getTrainvalue()!= null && mplacearray.get(pos).getTrainvalue().length() > 0 ) {
-                        mModetrain = mplacearray.get(pos).getTrainvalue();
-                        mTextView3.setText("Train -" + mModetrain);
+                        mModeTrain = mplacearray.get(pos).getTrainvalue();
+                        mTextView3.setText("Train -" + mModeTrain);
                     } else {
                         mTextView3.setText("");
                     }
@@ -158,14 +160,15 @@ public class SampleNavigationActivity extends Activity {
         }
     }
 
+    //To Display updated fetched values from Server to the Screen
     private void showValues(){
 
             mplacearray = new ArrayList<Place>();
             mlocationarray = new ArrayList<LocationValues>();
             if(mJSONArray != null)
-            name_arr = new String[mJSONArray.length()];
+                name_arr = new String[mJSONArray.length()];
             else{
-                Toast.makeText(mContext,"No Data Fetched from Server.Check your Internet Connectivity and Restart the Application",Toast.LENGTH_LONG).show();
+                Toast.makeText(mContext, R.string.nodatafetched,Toast.LENGTH_LONG).show();
                 if (Dialog.isShowing())
                     Dialog.dismiss();
                     return;
@@ -183,6 +186,8 @@ public class SampleNavigationActivity extends Activity {
                     mplacearray.add(mplaceval);
                     mlocationarray.add(mlocationval);
                 } catch (JSONException e) {
+                    Toast.makeText(getApplicationContext(),R.string.exceptionmessage,Toast.LENGTH_SHORT).show();
+                    Log.e(TAG,"JSONException : " + e.getMessage());
                     e.printStackTrace();
                 }
             }
